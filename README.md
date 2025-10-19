@@ -1,8 +1,15 @@
-# BlueBuild Template &nbsp; [![bluebuild build badge](https://github.com/blue-build/template/actions/workflows/build.yml/badge.svg)](https://github.com/blue-build/template/actions/workflows/build.yml)
+# MaudiBlue - Personal BlueBuild Image
 
-See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.
+A custom BlueBuild image based on wayblue hyprland with automated dotfiles management and development tools.
 
-After setup, it is recommended you update this README to describe your custom image.
+## Features
+
+- **Base**: wayblue hyprland (Fedora Silverblue with Hyprland)
+- **Automated Dotfiles**: Automatic cloning and linking from GitHub repository
+- **Development Tools**: Fish shell, Node.js, Rust, Python, Git, and more
+- **Container Support**: Podman, Buildah, Skopeo
+- **Flatpak Apps**: Firefox, Zen Browser, VS Code, Discord, Spotify, and more
+- **Auto-Updates**: Daily automatic dotfiles updates via systemd timer
 
 ## Installation
 
@@ -13,7 +20,7 @@ To rebase an existing atomic Fedora installation to the latest build:
 
 - First rebase to the unsigned image, to get the proper signing keys and policies installed:
   ```
-  rpm-ostree rebase ostree-unverified-registry:ghcr.io/blue-build/template:latest
+  rpm-ostree rebase ostree-unverified-registry:ghcr.io/maudi/maudiblue:latest
   ```
 - Reboot to complete the rebase:
   ```
@@ -21,23 +28,202 @@ To rebase an existing atomic Fedora installation to the latest build:
   ```
 - Then rebase to the signed image, like so:
   ```
-  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/blue-build/template:latest
+  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/maudi/maudiblue:latest
   ```
 - Reboot again to complete the installation
   ```
   systemctl reboot
   ```
 
-The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
+## First Boot Setup
 
-## ISO
+After installation, run the initial setup script to configure dotfiles:
 
-If build on Fedora Atomic, you can generate an offline ISO with the instructions available [here](https://blue-build.org/learn/universal-blue/#fresh-install-from-an-iso). These ISOs cannot unfortunately be distributed on GitHub for free due to large sizes, so for public projects something else has to be used for hosting.
+```bash
+# Run the initial setup (this will be available in the image)
+sudo /usr/local/share/scripts/initial-setup.sh
+```
+
+Or manually set up dotfiles:
+
+```bash
+# Clone and link dotfiles
+dotfiles-setup
+
+# Enable automatic updates
+systemctl --user enable dotfiles-update.timer
+systemctl --user start dotfiles-update.timer
+```
+
+## Dotfiles Management
+
+### Automatic Updates
+
+The image includes a systemd timer that automatically updates your dotfiles daily from the GitHub repository:
+
+- **Timer**: `dotfiles-update.timer` (runs daily)
+- **Service**: `dotfiles-update.service`
+- **Manual update**: `dotfiles-update`
+
+### Manual Commands
+
+```bash
+# Update dotfiles manually
+dotfiles-update
+
+# Check update timer status
+systemctl --user status dotfiles-update.timer
+
+# View update logs
+journalctl --user -u dotfiles-update.service
+
+# Disable automatic updates
+systemctl --user disable dotfiles-update.timer
+```
+
+### Dotfiles Repository
+
+The image automatically clones and links dotfiles from:
+- **Repository**: https://github.com/DanielMauderer/MyLinux.git
+- **Local directory**: `~/.dotfiles`
+- **Config directory**: `~/.config`
+
+Supported configurations:
+- Fish shell (`~/.config/fish/`)
+- Hyprland (`~/.config/hypr/`)
+- Waybar (`~/.config/waybar/`)
+- Fastfetch (`~/.config/fastfetch/`)
+- Alacritty, Kitty, Neovim, Vim, Zsh, Bash
+
+## Included Software
+
+### System Packages
+- **Shell**: Fish shell with fastfetch
+- **Development**: Git, Node.js, Rust, Python, GCC, Make, CMake
+- **Containers**: Podman, Buildah, Skopeo
+- **Editors**: Vim, Nano, Micro
+- **Utilities**: Htop, Tree, Curl, Wget, Rsync
+
+### Flatpak Applications
+- **Browsers**: Firefox, Zen Browser
+- **Development**: Visual Studio Code
+- **Communication**: Discord, Telegram
+- **Media**: Spotify
+- **System**: Flatseal, Desktop Files
+
+## Customization
+
+### Adding More Packages
+
+Edit `recipes/recipe.yml` and add packages to the `install` section:
+
+```yaml
+- type: dnf
+  install:
+    packages:
+      - your-package-here
+```
+
+### Adding More Flatpaks
+
+Edit `recipes/recipe.yml` and add to the `install` section:
+
+```yaml
+- type: default-flatpaks
+  configurations:
+    - install:
+        - your.flatpak.app
+```
+
+### Modifying Dotfiles Setup
+
+Edit the scripts in `files/scripts/` to customize the dotfiles setup process.
+
+## Building the Image
+
+This repository uses GitHub Actions to automatically build the image. The build process:
+
+1. Uses the BlueBuild GitHub Action
+2. Builds from the `recipes/recipe.yml` configuration
+3. Publishes to `ghcr.io/maudi/maudiblue:latest`
+4. Signs the image with cosign
+
+### Manual Build
+
+To build locally:
+
+```bash
+# Install BlueBuild
+pip install blue-build
+
+# Build the image
+blue-build build recipes/recipe.yml
+```
 
 ## Verification
 
-These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify the signature by downloading the `cosign.pub` file from this repo and running the following command:
+These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify the signature by downloading the `cosign.pub` file from this repo and running:
 
 ```bash
-cosign verify --key cosign.pub ghcr.io/blue-build/template
+cosign verify --key cosign.pub ghcr.io/maudi/maudiblue
 ```
+
+## Troubleshooting
+
+### Dotfiles Not Updating
+
+1. Check if the timer is enabled:
+   ```bash
+   systemctl --user status dotfiles-update.timer
+   ```
+
+2. Check for errors in the service:
+   ```bash
+   journalctl --user -u dotfiles-update.service
+   ```
+
+3. Manually run the update:
+   ```bash
+   dotfiles-update
+   ```
+
+### Configuration Not Applied
+
+1. Ensure dotfiles are properly linked:
+   ```bash
+   ls -la ~/.config/
+   ```
+
+2. Re-run the setup:
+   ```bash
+   dotfiles-setup
+   ```
+
+### Fish Shell Issues
+
+1. Check if Fish is the default shell:
+   ```bash
+   echo $SHELL
+   ```
+
+2. Set Fish as default:
+   ```bash
+   sudo chsh -s /usr/bin/fish $USER
+   ```
+
+## Contributing
+
+1. Fork the repository
+2. Make your changes
+3. Test the build locally
+4. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [BlueBuild](https://blue-build.org/) for the build system
+- [wayblue](https://github.com/wayblueorg/wayblue) for the base image
+- [Universal Blue](https://universal-blue.org/) for inspiration
