@@ -88,6 +88,37 @@ setup_shell() {
     fi
 }
 
+# Function to set up CLI tools inside a toolbox container
+setup_toolbox_cli() {
+    print_status "Setting up toolbox container with CLI tools..."
+
+    if ! command -v toolbox &> /dev/null; then
+        print_warning "toolbox is not available on this system. Skipping toolbox CLI setup."
+        return
+    fi
+
+    if toolbox list | grep -q "cli-tools"; then
+        print_status "Toolbox container 'cli-tools' already exists, updating packages..."
+        toolbox run -c cli-tools bash -c "
+            set -e
+            sudo dnf update -y
+            sudo dnf install -y bat fd-find ripgrep fzf tree btop neofetch rust cargo
+            cargo install eza || true
+        "
+    else
+        print_status "Creating toolbox container 'cli-tools' and installing CLI tools..."
+        toolbox create --image fedora-toolbox:latest cli-tools
+        toolbox run -c cli-tools bash -c "
+            set -e
+            sudo dnf update -y
+            sudo dnf install -y bat fd-find ripgrep fzf tree btop neofetch rust cargo
+            cargo install eza || true
+        "
+    fi
+
+    print_success "Toolbox 'cli-tools' is ready with requested CLI tools"
+}
+
 # Function to create desktop shortcuts
 create_shortcuts() {
     print_status "Creating desktop shortcuts..."
@@ -181,6 +212,7 @@ main() {
     setup_dotfiles
     enable_services
     setup_shell
+    setup_toolbox_cli
     create_shortcuts
     setup_virtualization
     

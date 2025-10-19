@@ -156,29 +156,21 @@ fi
 
 # Set up toolbox container with command line tools
 print_status "Setting up toolbox container with command line tools..."
-if toolbox list | grep -q "dev-tools"; then
-    print_status "Toolbox container 'dev-tools' already exists, updating..."
-    toolbox run -c dev-tools bash -c "
+if toolbox list | grep -q "cli-tools"; then
+    print_status "Toolbox container 'cli-tools' already exists, updating..."
+    toolbox run -c cli-tools bash -c "
         set -e
         sudo dnf update -y
-        sudo dnf install -y bat fd-find ripgrep fzf tree btop neofetch
-        sudo dnf install -y nodejs npm python3-pip rust cargo
-        sudo dnf install -y gcc gcc-c++ make cmake
-        sudo dnf install -y docker podman buildah skopeo
-        sudo dnf install -y git curl wget vim nano
+        sudo dnf install -y bat fd-find ripgrep fzf tree btop neofetch cargo
         cargo install eza
     "
 else
-    print_status "Creating new toolbox container 'dev-tools'..."
-    toolbox create --image fedora-toolbox:latest dev-tools
-    toolbox run -c dev-tools bash -c "
+    print_status "Creating new toolbox container 'cli-tools'..."
+    toolbox create --image fedora-toolbox:latest cli-tools
+    toolbox run -c cli-tools bash -c "
         set -e
         sudo dnf update -y
-        sudo dnf install -y bat fd-find ripgrep fzf tree btop neofetch
-        sudo dnf install -y nodejs npm python3-pip rust cargo
-        sudo dnf install -y gcc gcc-c++ make cmake
-        sudo dnf install -y docker podman buildah skopeo
-        sudo dnf install -y git curl wget vim nano
+        sudo dnf install -y bat fd-find ripgrep fzf tree btop neofetch cargo
         cargo install eza
     "
 fi
