@@ -20,24 +20,22 @@ modules:
   # Ensure required packages are in the image before running scripts
   - type: rpm-ostree
     install:
-      packages:
-        # Required for build-time cloning
-        - git
-        # Fish shell and related tools
-        - fish
-        - fastfetch
-        # Virtualization and mobile container support
-        - waydroid
-        - virt-manager
-        - libvirt
-        - qemu-kvm
-        - virt-viewer
-        - lxqt-policykit
+      # Required for build-time cloning
+      - git
+      # Fish shell and related tools
+      - fish
+      - fastfetch
+      # Virtualization and mobile container support
+      - waydroid
+      - virt-manager
+      - libvirt
+      - qemu-kvm
+      - virt-viewer
+      - lxqt-policykit
     remove:
-      packages:
-        # Remove default browsers in favor of flatpaks
-        - firefox
-        - firefox-langpacks
+      # Remove default browsers in favor of flatpaks
+      - firefox
+      - firefox-langpacks
 
   # Clone dotfiles into the image at build time
   - type: script
