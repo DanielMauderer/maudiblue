@@ -51,14 +51,10 @@ modules:
         scope: system
         # If no repo information is specified, Flathub will be used by default
         install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
           - org.gnome.Loupe
-          - com.github.zen_browser.zen
+          - app.zen_browser.zen
           - com.spotify.Client
-          - org.telegram.desktop
           - com.discordapp.Discord
-          - com.visualstudio.code
-          - io.github.shiftey.Desktop
           - com.github.tchx84.Flatseal
       - scope: user # Also add Flathub user repo, but no user packages
 
