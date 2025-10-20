@@ -38,11 +38,11 @@ modules:
       - firefox-langpacks
 
   # Clone dotfiles into the image at build time
-- type: script
-  scripts:
-    - clone-dotfiles.sh
-  snippets:
-    - 'test -d /usr/local/share/dotfiles || { echo "dotfiles missing"; exit 1; }'
+  - type: script
+    scripts:
+      - clone-dotfiles.sh
+    snippets:
+      - 'test -d /usr/local/share/dotfiles || { echo "dotfiles missing"; exit 1; }'
 
   - type: default-flatpaks
     configurations:
