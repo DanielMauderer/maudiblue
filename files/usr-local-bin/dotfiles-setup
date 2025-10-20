@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Dotfiles setup script - accessible system-wide
-# This script sets up dotfiles from the GitHub repository
-
-/usr/local/share/scripts/dotfiles-setup.sh

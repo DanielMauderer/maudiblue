@@ -14,8 +14,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-DOTFILES_REPO="https://github.com/DanielMauderer/MyLinux.git"
-DOTFILES_DIR="/home/$USER/.dotfiles"
+DOTFILES_DIR="/usr/local/share/dotfiles" # cloned at build time by script module
 CONFIG_DIR="/home/$USER/.config"
 
 # Function to print colored output
@@ -67,20 +66,10 @@ create_symlink() {
 setup_dotfiles() {
     print_header
     
-    # Check if git is available
-    if ! command -v git &> /dev/null; then
-        print_error "Git is not available. Please install git first."
+    # Dotfiles are expected to exist in the image at $DOTFILES_DIR
+    if [[ ! -d "$DOTFILES_DIR" ]]; then
+        print_error "Dotfiles directory not found at $DOTFILES_DIR. Ensure recipe script cloned it."
         exit 1
-    fi
-    
-    # Clone or update dotfiles repository
-    if [[ -d "$DOTFILES_DIR" ]]; then
-        print_status "Dotfiles repository already exists, updating..."
-        cd "$DOTFILES_DIR"
-        git pull origin main
-    else
-        print_status "Cloning dotfiles repository..."
-        git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
     fi
     
     # Ensure config directory exists
@@ -116,28 +105,14 @@ setup_dotfiles() {
         fi
     done
     
-    # Set up update script
-    print_status "Setting up dotfiles update script..."
-    cat > "$DOTFILES_DIR/update.sh" << 'EOF'
-#!/bin/bash
-# Auto-generated update script for dotfiles
-cd "$(dirname "$0")"
-git pull origin main
-echo "Dotfiles updated successfully!"
-EOF
-    chmod +x "$DOTFILES_DIR/update.sh"
-    
     print_success "Dotfiles setup completed!"
     echo ""
     echo "📋 Summary:"
-    echo "  • Repository: $DOTFILES_REPO"
     echo "  • Local directory: $DOTFILES_DIR"
     echo "  • Config directory: $CONFIG_DIR"
-    echo "  • Update script: $DOTFILES_DIR/update.sh"
     echo ""
-    echo "🔧 To update dotfiles manually:"
-    echo "  cd $DOTFILES_DIR && ./update.sh"
-    echo "  or: cd $DOTFILES_DIR && git pull origin main"
+    echo "🔧 To relink dotfiles manually:"
+    echo "  re-run: /usr/local/share/scripts/dotfiles-setup.sh"
 }
 
 # Main execution

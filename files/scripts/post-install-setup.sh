@@ -45,11 +45,9 @@ check_silverblue() {
     fi
 }
 
-# Function to setup dotfiles
+# Function to setup dotfiles (link only, repo is pre-cloned into image)
 setup_dotfiles() {
-    print_status "Setting up dotfiles from GitHub repository..."
-    
-    # Run the dotfiles setup script
+    print_status "Linking dotfiles from image into user config..."
     if [[ -f "/usr/local/share/scripts/dotfiles-setup.sh" ]]; then
         /usr/local/share/scripts/dotfiles-setup.sh
     else
@@ -60,13 +58,8 @@ setup_dotfiles() {
 
 # Function to enable services
 enable_services() {
-    print_status "Enabling automatic dotfiles updates..."
-    
-    # Enable the dotfiles update timer
-    systemctl --user enable dotfiles-update.timer
-    systemctl --user start dotfiles-update.timer
-    
-    print_success "Automatic dotfiles updates enabled"
+    # No periodic updates; dotfiles are baked in and linked per-user
+    print_status "Skipping automatic dotfiles update timers (not needed)."
 }
 
 # Function to setup shell
@@ -121,38 +114,8 @@ setup_toolbox_cli() {
 
 # Function to create desktop shortcuts
 create_shortcuts() {
-    print_status "Creating desktop shortcuts..."
-    
-    # Create applications directory
-    mkdir -p ~/.local/share/applications
-    
-    # Dotfiles update shortcut
-    cat > ~/.local/share/applications/dotfiles-update.desktop << EOF
-[Desktop Entry]
-Name=Update Dotfiles
-Comment=Update dotfiles from GitHub repository
-Exec=/usr/local/bin/dotfiles-update
-Icon=applications-development
-Terminal=true
-Type=Application
-Categories=System;
-EOF
-    
-    # System info shortcut
-    cat > ~/.local/share/applications/system-info.desktop << EOF
-[Desktop Entry]
-Name=System Information
-Comment=Show system information with fastfetch
-Exec=fastfetch
-Icon=utilities-system-monitor
-Terminal=true
-Type=Application
-Categories=System;
-EOF
-    
-    chmod +x ~/.local/share/applications/*.desktop
-    
-    print_success "Desktop shortcuts created"
+    # Skip creating dotfiles update desktop entry
+    print_status "Skipping dotfiles update desktop shortcut."
 }
 
 # Function to setup virtualization (libvirt/virt-manager)
@@ -179,8 +142,7 @@ show_final_instructions() {
     print_success "Post-installation setup completed!"
     echo ""
     echo "📋 What was set up:"
-    echo "  • Dotfiles cloned and linked from GitHub"
-    echo "  • Automatic daily updates enabled"
+    echo "  • Dotfiles linked from image-cloned repository"
     echo "  • Fish shell set as default"
     echo "  • Desktop shortcuts created"
     echo ""

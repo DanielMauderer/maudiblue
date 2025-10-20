@@ -14,21 +14,15 @@ image-version: latest # latest is also supported if you want new updates ASAP
 modules:
   - type: files
     files:
-      - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
       - source: scripts
-        destination: /var/usrlocal/share/scripts # copies scripts to system location
-      - source: usr-local-bin
-        destination: /var/usrlocal/bin
-
-  - type: dnf
-    repos:
-      copr:
-        - atim/starship
+        destination: /usr/local/share/scripts # copies scripts to system location
+  
+  # Ensure required packages are in the image before running scripts
+  - type: rpm-ostree
     install:
       packages:
-        - micro
-        - starship
+        # Required for build-time cloning
+        - git
         # Fish shell and related tools
         - fish
         - fastfetch
@@ -45,17 +39,26 @@ modules:
         - firefox
         - firefox-langpacks
 
+  # Clone dotfiles into the image at build time
+  - type: script
+    scripts:
+      - clone-dotfiles.sh
+
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
+      - scope: user
+        repo:
+          # you can override the title to make inclusion of both system and user repos clearer
+          title: Flathub (user)
+      - notify: true
         scope: system
-        # If no repo information is specified, Flathub will be used by default
+        repo:
+          title: Flathub (system)
         install: # system flatpaks we want all users to have and not remove
           - org.gnome.Loupe
           - app.zen_browser.zen
           - com.spotify.Client
           - com.discordapp.Discord
           - com.github.tchx84.Flatseal
-      - scope: user # Also add Flathub user repo, but no user packages
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully

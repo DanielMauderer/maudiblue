@@ -41,19 +41,9 @@ print_header() {
 run_initial_setup() {
     print_header
     
-    # Make scripts executable
-    print_status "Setting up executable permissions..."
-    chmod +x /usr/local/bin/dotfiles-update
-    chmod +x /usr/local/bin/dotfiles-setup
-    
-    # Run dotfiles setup
-    print_status "Setting up dotfiles..."
-    /usr/local/bin/dotfiles-setup
-    
-    # Enable dotfiles update timer
-    print_status "Enabling automatic dotfiles updates..."
-    systemctl --user enable dotfiles-update.timer
-    systemctl --user start dotfiles-update.timer
+    # Run dotfiles linking (dotfiles pre-cloned into image)
+    print_status "Linking dotfiles into user config..."
+    /usr/local/share/scripts/dotfiles-setup.sh
     
     # Set up Fish as default shell if available
     if command -v fish &> /dev/null; then
@@ -65,35 +55,14 @@ run_initial_setup() {
         print_success "Fish set as default shell"
     fi
     
-    # Create desktop entry for easy access
-    print_status "Creating desktop shortcuts..."
-    mkdir -p ~/.local/share/applications
-    
-    cat > ~/.local/share/applications/dotfiles-update.desktop << EOF
-[Desktop Entry]
-Name=Update Dotfiles
-Comment=Update dotfiles from GitHub repository
-Exec=/usr/local/bin/dotfiles-update
-Icon=applications-development
-Terminal=true
-Type=Application
-Categories=System;
-EOF
-    
-    chmod +x ~/.local/share/applications/dotfiles-update.desktop
-    
     print_success "Initial setup completed!"
     echo ""
     echo "📋 What was set up:"
-    echo "  • Dotfiles cloned and linked from GitHub"
-    echo "  • Automatic daily updates enabled"
+    echo "  • Dotfiles linked from image-cloned repository"
     echo "  • Fish shell set as default (if available)"
-    echo "  • Desktop shortcut for manual updates"
     echo ""
     echo "🔧 Manual commands:"
-    echo "  • Update dotfiles: dotfiles-update"
-    echo "  • Check update timer: systemctl --user status dotfiles-update.timer"
-    echo "  • Manual update: systemctl --user start dotfiles-update.service"
+    echo "  • Relink dotfiles: /usr/local/share/scripts/dotfiles-setup.sh"
     echo ""
     print_warning "You may need to log out and back in for all changes to take effect."
 }
