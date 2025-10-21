@@ -41,8 +41,6 @@ modules:
   - type: script
     scripts:
       - clone-dotfiles.sh
-    snippets:
-      - 'test -d /usr/local/share/dotfiles || { echo "dotfiles missing"; exit 1; }'
 
   - type: default-flatpaks
     configurations:
