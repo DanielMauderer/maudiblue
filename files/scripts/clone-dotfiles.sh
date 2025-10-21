@@ -9,5 +9,6 @@ if [ -d /usr/share/.git ]; then
 else
   echo "[script] Cloning dotfiles repo..."
   rm -rf /usr/share/hypr || true
-  git clone --depth=1 https://github.com/DanielMauderer/MyLinux.git /usr/share
+  git clone --depth=1 https://github.com/DanielMauderer/MyLinux.git /usr/share/MyLinux
+  cp /usr/share/MyLinux/hypr /usr/share/hypr -r
 fi
