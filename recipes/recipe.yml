@@ -1,46 +1,40 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
-name: maudiblue
-# description will be included in the image's metadata
-description: Personal BlueBuild image with wayblue hyprland base and automated dotfiles management
 
-# the base image to build on top of (FROM) and the version tag to use
+name: maudiblue
+description: Custom Fedora Atomic image with Hyprland and workflow tools
 base-image: ghcr.io/wayblueorg/hyprland
 image-version: latest # latest is also supported if you want new updates ASAP
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
-  - type: files
-    files:
-      - source: scripts
-        destination: /usr/local/share/scripts # copies scripts to system location
-  
-  # Ensure required packages are in the image before running scripts
+  # 1️⃣ Install system packages
   - type: rpm-ostree
     install:
-      # Required for build-time cloning
-      - git
-      # Fish shell and related tools
       - fish
       - fastfetch
-      # Virtualization and mobile container support
       - waydroid
       - virt-manager
       - libvirt
       - qemu-kvm
       - virt-viewer
       - lxqt-policykit
-    remove:
-      # Remove default browsers in favor of flatpaks
-      - firefox
-      - firefox-langpacks
+      - cargo
 
-  # Clone dotfiles into the image at build time
+  - type: files
+    files:
+      - source: system   # copies `files/system/*` (* means everything inside it) into your image's root folder `/`
+        destination: /usr/share/scripts
+
+  # 3️⃣ Enable libvirtd and set up first boot
   - type: script
     scripts:
-      - clone-dotfiles.sh
+      - install_cargo_tools.sh
+      
+  - type: systemd
+    system:
+      enable:
+        - firstboot.service
+        - libvirtd.service
 
   - type: default-flatpaks
     configurations:
@@ -52,11 +46,8 @@ modules:
         scope: system
         repo:
           title: Flathub (system)
-        install: # system flatpaks we want all users to have and not remove
-          - org.gnome.Loupe
+        install: 
+          - io.github.flattool.Warehouse
           - app.zen_browser.zen
           - com.spotify.Client
-          - com.discordapp.Discord
           - com.github.tchx84.Flatseal
-
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully

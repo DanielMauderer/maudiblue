@@ -41,7 +41,7 @@ After installation, run the initial setup script to configure dotfiles:
 
 ```bash
 # Run the initial setup (this will be available in the image)
-sudo /usr/local/share/scripts/initial-setup.sh
+sudo /usr/share/scripts/initial-setup.sh
 ```
 
 Or manually set up dotfiles:
