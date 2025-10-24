@@ -36,6 +36,19 @@ modules:
         - firstboot.service
         - libvirtd.service
 
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - FiraCode # don't add spaces or "Nerd Font" suffix.
+        - Hack
+        - SourceCodePro
+        - Terminus
+        - JetBrainsMono
+        - NerdFontsSymbolsOnly
+      google-fonts:
+        - Roboto
+        - Open Sans
+
   - type: default-flatpaks
     configurations:
       - scope: user
