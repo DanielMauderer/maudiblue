@@ -12,6 +12,8 @@ modules:
     install:
       - fish
       - fastfetch
+      - wlogout
+      - NetworkManager-tui
       - waydroid
       - virt-manager
       - libvirt
