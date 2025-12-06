@@ -22,6 +22,10 @@ modules:
       - lxqt-policykit
       - cargo
 
+  - type: dnf
+    install:
+      - swaybg
+
   - type: files
     files:
       - source: system   # copies `files/system/*` (* means everything inside it) into your image's root folder `/`
