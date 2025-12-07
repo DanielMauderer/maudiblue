@@ -23,8 +23,9 @@ modules:
       - cargo
 
   - type: dnf
-    install:
-      - swaybg
+    packages:
+      install:
+        - swaybg
 
   - type: files
     files:
