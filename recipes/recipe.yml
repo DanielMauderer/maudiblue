@@ -31,6 +31,8 @@ modules:
     files:
       - source: system   # copies `files/system/*` (* means everything inside it) into your image's root folder `/`
         destination: /usr/share/scripts
+      - source: etc
+        destination: /etc
 
   # 3️⃣ Enable libvirtd and set up first boot
   - type: script
