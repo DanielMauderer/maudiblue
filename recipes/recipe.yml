@@ -21,6 +21,7 @@ modules:
       - virt-viewer
       - lxqt-policykit
       - cargo
+      - swaylock
 
   - type: dnf
     install:
