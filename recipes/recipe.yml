@@ -22,13 +22,13 @@ modules:
       - lxqt-policykit
       - cargo
       - swaylock
-      - swayidle
       - podman-compose
 
   - type: dnf
     install:
       packages:
         - swaybg
+        - swayidle
 
   - type: files
     files:
