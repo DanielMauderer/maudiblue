@@ -20,7 +20,7 @@ modules:
       - qemu-kvm
       - virt-viewer
       - lxqt-policykit
-      - cargo
+      # - cargo
       - swaylock
       - podman-compose
       - wireguard-tools
