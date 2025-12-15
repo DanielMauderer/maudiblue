@@ -23,6 +23,7 @@ modules:
       - cargo
       - swaylock
       - podman-compose
+      - wireguard-tools
 
   - type: dnf
     install:
