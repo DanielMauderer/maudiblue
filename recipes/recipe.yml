@@ -45,9 +45,9 @@ modules:
         destination: /etc
 
   # 3️⃣ Enable libvirtd and set up first boot
-  - type: script
-    scripts:
-      - install_cargo_tools.sh
+  # - type: script
+  #  scripts:
+  #    - install_cargo_tools.sh
       
   - type: systemd
     system:
