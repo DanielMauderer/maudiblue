@@ -24,6 +24,12 @@ modules:
       - swaylock
       - podman-compose
       - wireguard-tools
+      - bat 
+      - fd-find 
+      - ripgrep 
+      - fzf 
+      - tree 
+      - btop
 
   - type: dnf
     install:
