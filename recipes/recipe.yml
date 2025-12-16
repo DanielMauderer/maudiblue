@@ -30,6 +30,8 @@ modules:
       - fzf 
       - tree 
       - btop
+      - neovim
+      - python3-neovim
 
   - type: dnf
     install:
