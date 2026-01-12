@@ -32,6 +32,7 @@ modules:
       - btop
       - neovim
       - python3-neovim
+      - power-profiles-daemon
 
   - type: dnf
     install:
