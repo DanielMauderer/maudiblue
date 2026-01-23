@@ -38,6 +38,7 @@ modules:
       packages:
         - swaybg
         - swayidle
+        - papirus-icon-theme
 
   - type: files
     files:
