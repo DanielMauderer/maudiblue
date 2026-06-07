@@ -59,6 +59,14 @@ modules:
         - libvirtd.service
         - rpm-ostreed-automatic.timer
 
+  - type: brew
+    # optional settings below (all have sensible defaults)
+    brew-analytics: false       # disable Homebrew analytics
+    auto-update: true           # enable brew's auto-update
+    auto-upgrade: true          # enable auto-upgrade
+    update-interval: 6h
+    upgrade-interval: 8h
+
   - type: fonts
     fonts:
       nerd-fonts:
